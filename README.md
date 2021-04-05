@@ -37,11 +37,7 @@ Tableau Prep Orchestrator is an open-source alternative to Tableau Prep Conducto
 - security
 - docker-compose to docker swarm
 
-## To Do
-- improve the the readme
-
 ## Acknowledgments
 
 The Apache Airflow portion of this project is based on:
-
 https://github.com/puckel/docker-airflow
