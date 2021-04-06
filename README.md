@@ -17,9 +17,13 @@ Tableau Prep Orchestrator is an open-source alternative to Tableau Prep Conducto
 
 ### Build & Deploy with Docker
 
-- compose with compose command
-
+- build
 - <code>docker build -t airflow .</code>
+
+- run with docker run (Sequential Executor)
+- <code>docker run -d -p 8080:8080 airflow tableau-prep-orchestrator</code>
+
+- run with docker-compose (Local Executor)
 - <code>docker-compose -f docker-compose-LocalExecutor.yml up -d</code>
 
 ### Check It Out
@@ -27,7 +31,7 @@ Tableau Prep Orchestrator is an open-source alternative to Tableau Prep Conducto
 - localhost:8080
 - screenshots
 
-## Cusomizations
+## Customizations
 
 - edit each DAG to change timezone, scheduled execution times, and failure handling
 - edit airflow config and dockerfiles to customize the implementations of airflow (needed for enterprise grade)
