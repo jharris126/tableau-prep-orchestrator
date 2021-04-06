@@ -1,0 +1,78 @@
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
+from datetime import datetime, timedelta
+import pendulum
+import json
+import yaml
+import time
+import tableauserverclient as TSC
+
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'start_date': datetime(2018, 9, 1, tzinfo=pendulum.timezone('America/Los_Angeles')),
+    'email': [],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=2)
+    }
+
+dag = DAG('orchestrate_prep_flows', default_args=default_args, catchup=False, schedule_interval='0 0 * * *')
+
+def run_flow(flow_luid):
+
+    with open('tableau-config.yml', 'r') as stream:
+        tableau_info = yaml.safe_load(stream)
+
+    tableau_auth = TSC.TableauAuth(tableau_info['tableau-username'], tableau_info['tableau-password'], site_id=tableau_info['tableau-site'])
+    server = TSC.Server(tableau_info['tableau-base-url'], use_server_version=True)
+
+    with server.auth.sign_in(tableau_auth):
+        flow_obj = server.flows.get_by_id(flow_luid)
+        flow_run = server.flows.refresh(flow_obj)
+
+        status = server.jobs.get_by_id(flow_run.id).finish_code
+
+        while status == -1:
+            status = server.jobs.get_by_id(flow_run.id).finish_code
+
+            if status == 2:
+                ValueError('Job cancelled')
+            elif status == 1:
+                ValueError('Job finished with error')
+
+            time.sleep(5)
+
+        print(flow_obj.name + ': Completed')
+
+
+file = 'flows.json'
+with open(file) as json_file:
+    flows = json.load(json_file)['flows']
+
+if len(flows) == 0:
+    task = DummyOperator(
+        task_id='Placeholder_NoFlowsDectected',
+        dag=dag
+    )
+else:
+    ops = {}
+    for flow in flows:
+        task = PythonOperator(
+                task_id=flow['name'].replace(' ', '_'),
+                python_callable=run_flow,
+                op_kwargs={'flow_luid': flow['luid']},
+                dag=dag
+                )
+
+        ops[flow['name']] = task
+
+
+for flw in flows:
+    for dwn in flw['downstreamFlows']:
+        flw_name = flw['name']
+        dwn_name = dwn['name']
+        ops[flw_name] >> ops[dwn_name]
