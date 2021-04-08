@@ -70,6 +70,17 @@ else:
 
         ops[flow['name']] = task
 
+    for flow in flows:
+        for dwnstrm_flow in flow['downstreamFlows']:
+            task = PythonOperator(
+                task_id=dwnstrm_flow['name'].replace(' ', '_'),
+                python_callable=run_flow,
+                op_kwargs={'flow_luid': dwnstrm_flow['luid']},
+                dag=dag
+                )
+
+            ops[dwnstrm_flow['name']] = task
+
 
 for flw in flows:
     for dwn in flw['downstreamFlows']:

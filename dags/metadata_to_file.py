@@ -23,19 +23,30 @@ default_args = {
 dag = DAG('metadata_to_file', default_args=default_args, catchup=False, schedule_interval='*/5 * * * *')
 
 def get_metadata():
-    flows_query = '''{
-    flows {
-        id
-        luid
-        name
-        downstreamFlows {
-        name
-        }
-    }
-    }'''
-
     with open('tableau-config.yml', 'r') as stream:
         tableau_info = yaml.safe_load(stream)
+
+    project_ls_raw = []
+    if tableau_info['projects-to-refresh-from']:
+        project_ls_raw.extend(tableau_info['projects-to-refresh-from'])
+    projects_ls = [f'"{proj}"' for proj in project_ls_raw]
+    if len(projects_ls) == 0:
+        project_filter = ''
+    else:
+        projects = str.join(', ', projects_ls)
+        project_filter = '''(filter: {projectNameWithin: [''' + projects + ''']})'''
+
+    flows_query = '''{
+        flows''' + project_filter + ''' {
+            id
+            luid
+            name
+            downstreamFlows {
+            luid
+            name
+            }
+        }
+        }'''
 
     tableau_auth = TSC.TableauAuth(tableau_info['tableau-username'], tableau_info['tableau-password'], site_id=tableau_info['tableau-site'])
     server = TSC.Server(tableau_info['tableau-base-url'], use_server_version=True)

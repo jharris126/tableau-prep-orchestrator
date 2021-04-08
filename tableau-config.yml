@@ -3,3 +3,6 @@
   tableau-site: ""
   tableau-username: ""
   tableau-password: ""
+  # leave blank to gather flows from all projects
+  projects-to-refresh-from:
+    - "default"
