@@ -44,23 +44,25 @@ Open terminal or cmd and navigate to the directory where you cloned the GitHub R
 
 ### Check It Out
 
-Open a browser window and navigate to <localhost:8080> to start using Tableau Prep Orchestrator
+Open a browser window and navigate to <http://localhost:8080> to start using Tableau Prep Orchestrator
 
-Turn first dag on
+Toggle the DAG to "On" and wait a few seconds for it to run. This gather the Flows metadata from Tableau and use it to create the orchestration DAG. Refresh your browser and see the newly created "orchestrate_prep_flows" DAG. Toggle it to "On" as well and click the linked DAG name to navigate to the graph view.
 
 ![Home Screen](./screenshots/home.png)
 
-Second DAG should show up, turn that on
-
-Watch it run
+In the DAG graph view, press the refresh button in the top-right corner periodically to watch Airflow run each Flow on Tableau and monitor its timing and progress.
 
 ![Prep Flows as Airflow DAG](./screenshots/orchestrate_prep_flows.png)
 
+You can view a short video of the process here: <https://vimeo.com/>
+
 ## Customizations
 
-- edit each DAG to change timezone, scheduled execution times, and failure handling
-- edit airflow config and dockerfiles to customize the implementations of airflow (needed for enterprise grade)
-- add new DAG files (.py files in the DAG folder) or alter current ones to add any other workflows to run in tandem to Prep Flows
+One of the bigget benefits to Tableau Prep Orchestrator is it's also a full intance of Airflow with limitless was to customize and extend its functionality.
+
+- Edit each DAG to change timezone, scheduled execution times, and how to handle task failures.
+- Edit the Airflow config and dockerfiles to customize the implementations of Airflow and how it is deployed.
+- Add new DAGs or alter current ones to add any other workflows to run in tandem to Prep Flows. This can be used to manage backups or automate permissions and licensing on your Tableau Server. Everything is preinstalled and templated to further automate and extend your Tableau environment as more needs arise.
 
 ## Productionize
 - By default, Tableau Prep Orchestrator does not use authenticaion. To run in production, you would want to modify the airflow.cfg file to enable your desired authentication method.
