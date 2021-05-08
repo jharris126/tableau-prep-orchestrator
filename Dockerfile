@@ -77,6 +77,7 @@ COPY tableau-config.yml ${AIRFLOW_USER_HOME}/tableau-config.yml
 COPY dags/flows.json ${AIRFLOW_USER_HOME}/flows.json
 
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 8080
 

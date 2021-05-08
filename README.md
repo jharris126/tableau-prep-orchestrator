@@ -8,28 +8,44 @@ Tableau Prep Orchestrator is an open-source alternative to Tableau Prep Conducto
 
 ### Setup Docker
 
-- install docker and docker compose
+Before you can use Tableau Prep Orchestrator, you will need to install Docker.
+
+- Install Docker
+  - <https://docs.docker.com/get-docker/>
 
 ### Clone the GitHub Project
 
-- clone the repo
-- build with build command
+- Clone this repo onto your local machine
+- Fill out tableau-config.yml file with your Tableau Server/Online connection info. If you only want to orchestrate Tableau Prep Flows in certain projects, fill out the *projects-to-refresh-from* section with a list of projects. Otherwise, leave empty and all Flows on the site will be pulled in for orchestration.
+
+![tableau-config YAML](./screenshots/tableau-config.png)
 
 ### Build & Deploy with Docker
 
-- build
-- <code>docker build -t airflow .</code>
+Open terminal or cmd and navigate to the directory where you cloned the GitHub Repo then run the commands below that correspond to the setup you would like.
 
-- run with docker run (Sequential Executor)
-- <code>docker run -d -p 8080:8080 airflow tableau-prep-orchestrator</code>
+- Build your docker image
+  - `docker build -t airflow . --no-cache`
+
+- Run with docker run (Sequential Executor)
+  - `docker run -d -p 8080:8080 airflow tableau-prep-orchestrator`
 
 - run with docker-compose (Local Executor)
-- <code>docker-compose -f docker-compose-LocalExecutor.yml up -d</code>
+  - `docker compose -f docker-compose-LocalExecutor.yml up -d`
 
 ### Check It Out
 
-- localhost:8080
-- screenshots
+Open a browser window and navigate to <localhost:8080> to start using Tableau Prep Orchestrator
+
+Turn first dag on
+
+![Home Screen](./screenshots/home.png)
+
+Second DAG should show up, turn that on
+
+Watch it run
+
+![Prep Flows as Airflow DAG](./screenshots/orchestrate_prep_flows.png)
 
 ## Customizations
 
@@ -38,10 +54,10 @@ Tableau Prep Orchestrator is an open-source alternative to Tableau Prep Conducto
 - add new DAG files (.py files in the DAG folder) or alter current ones to add any other workflows to run in tandem to Prep Flows
 
 ## Productionize
-- security
-- docker-compose to docker swarm
+- By default, Tableau Prep Orchestrator does not use authenticaion. To run in production, you would want to modify the airflow.cfg file to enable your desired authentication method.
+- docker-compose is great for Development and Test environments where containers can be quickly spun up and linked on a single machine. However, to make better use of the horizontal scalability of Airflow and Docker, replace Docker Compose with a Docker Swarm or Kubernetes clustered architecture.
 
 ## Acknowledgments
 
 The Apache Airflow portion of this project is based on:
-https://github.com/puckel/docker-airflow
+<https://github.com/puckel/docker-airflow>
