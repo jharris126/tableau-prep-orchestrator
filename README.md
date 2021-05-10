@@ -54,7 +54,7 @@ In the DAG graph view, press the refresh button in the top-right corner periodic
 
 ![Prep Flows as Airflow DAG](./screenshots/orchestrate_prep_flows.png)
 
-You can view a short video of the process here: <https://vimeo.com/manage/videos/546802329>
+You can view a short video of the process here: <https://vimeo.com/videos/546802329>
 
 ## Customizations
 
