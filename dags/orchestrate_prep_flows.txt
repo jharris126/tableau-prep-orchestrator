@@ -75,4 +75,5 @@ for flw in flows:
     for dwn in flw['downstreamFlows']:
         flw_name = flw['name']
         dwn_name = dwn['name']
-        ops[flw_name] >> ops[dwn_name]
+        if dwn_name in [flw['name'] for flw in flows]:
+            ops[flw_name] >> ops[dwn_name]
